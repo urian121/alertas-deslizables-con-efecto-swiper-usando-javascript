@@ -3,8 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sliding Alert</title>
+  <title>Interactive Sliding Alert</title>
   <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden; /* Evita el scroll horizontal */
+    }
+
+    #alertContainer {
+      position: relative;
+      overflow: hidden; /* Previene desbordamientos */
+    }
+
     .alert {
       background-color: #f8d7da;
       color: #721c24;
@@ -12,18 +23,13 @@
       border-radius: 4px;
       margin-bottom: 20px;
       position: relative;
-      transition: transform 0.3s ease-in-out, opacity 0.3s ease;
+      transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+      opacity: 1;
       cursor: pointer;
     }
 
-    .alert.slide-right {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-
-    .alert.slide-left {
-      transform: translateX(-100%);
-      opacity: 0;
+    .alert.dragging {
+      transition: none; /* Desactiva la transición para el arrastre */
     }
   </style>
 </head>
@@ -33,43 +39,60 @@
   <div id="alertContainer"></div>
 
   <script>
-    let startX = 0; // Coordenada inicial del toque o clic
-    let endX = 0;   // Coordenada final del toque o clic
-
     function showAlert() {
       const alert = document.createElement("div");
       alert.classList.add("alert");
       alert.textContent = "Slide me left or right to remove me!";
 
-      // Eventos táctiles
-      alert.addEventListener("touchstart", handleStart);
-      alert.addEventListener("touchend", handleEnd);
+      // Variables para el arrastre
+      let startX = 0;
+      let currentX = 0;
+      let isDragging = false;
 
-      // Eventos de ratón
-      alert.addEventListener("mousedown", handleStart);
-      alert.addEventListener("mouseup", handleEnd);
+      // Agrega eventos para el arrastre
+      alert.addEventListener("mousedown", (e) => startDrag(e.clientX, alert));
+      alert.addEventListener("touchstart", (e) => startDrag(e.touches[0].clientX, alert));
+
+      document.addEventListener("mousemove", (e) => drag(e.clientX, alert));
+      document.addEventListener("touchmove", (e) => drag(e.touches[0].clientX, alert));
+
+      document.addEventListener("mouseup", () => endDrag(alert));
+      document.addEventListener("touchend", () => endDrag(alert));
 
       document.getElementById("alertContainer").appendChild(alert);
-    }
 
-    function handleStart(e) {
-      startX = e.touches ? e.touches[0].clientX : e.clientX; // Coordenada inicial
-    }
+      function startDrag(x, element) {
+        startX = x;
+        isDragging = true;
+        element.classList.add("dragging");
+      }
 
-    function handleEnd(e) {
-      endX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX; // Coordenada final
-      const swipeDistance = endX - startX;
+      function drag(x, element) {
+        if (!isDragging) return;
 
-      const alert = e.target; // Elemento actual
+        currentX = x - startX; // Calcula la distancia arrastrada
+        element.style.transform = `translateX(${currentX}px)`; // Aplica el desplazamiento
+      }
 
-      if (swipeDistance > 100) {
-        // Desliza hacia la derecha
-        alert.classList.add("slide-right");
-        setTimeout(() => alert.remove(), 300); // Elimina del DOM
-      } else if (swipeDistance < -100) {
-        // Desliza hacia la izquierda
-        alert.classList.add("slide-left");
-        setTimeout(() => alert.remove(), 300); // Elimina del DOM
+      function endDrag(element) {
+        if (!isDragging) return;
+
+        isDragging = false;
+        element.classList.remove("dragging");
+
+        // Verifica si se deslizó lo suficiente para eliminar
+        if (currentX > 100) {
+          element.style.transform = `translateX(100%)`;
+          element.style.opacity = 0;
+          setTimeout(() => element.remove(), 300); // Elimina del DOM
+        } else if (currentX < -100) {
+          element.style.transform = `translateX(-100%)`;
+          element.style.opacity = 0;
+          setTimeout(() => element.remove(), 300); // Elimina del DOM
+        } else {
+          // Regresa a la posición inicial si no fue suficiente
+          element.style.transform = `translateX(0)`;
+        }
       }
     }
   </script>
