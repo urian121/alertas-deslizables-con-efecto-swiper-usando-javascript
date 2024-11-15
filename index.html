@@ -45,36 +45,59 @@ ul {
 
 
     <script>
-      const tasks = document.querySelectorAll(".task");
+   const tareas = document.querySelectorAll(".tarea");
 
-tasks.forEach(task => {
-    let touchStartX = 0;
-    let touchEndX = 0;
+tareas.forEach(tarea => {
+  let touchStartX = 0;
+  let touchEndX = 0;
 
-    // Captura la posición inicial del toque
-    task.addEventListener("touchstart", (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-    });
+  // Capturar la posición inicial del toque
+  tarea.addEventListener("touchstart", (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  });
 
-    // Captura la posición final del toque y verifica si hubo un deslizamiento
-    task.addEventListener("touchend", (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe(task);
-    });
+  // Capturar la posición del deslizamiento
+  tarea.addEventListener("touchmove", (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+  });
 
-    function handleSwipe(taskElement) {
-        const swipeDistance = touchEndX - touchStartX;
+  // Capturar la posición final del toque y manejar el deslizamiento
+  tarea.addEventListener("touchend", (e) => {
+    manejarDeslizamiento(tarea);
+  });
 
-        // Si la distancia del swipe es suficiente hacia la derecha, marcar como completada
-        if (swipeDistance > 100) {
-            taskElement.classList.add("completed");
-        } else if (swipeDistance < -100) { 
-            // Si desliza a la izquierda, opcionalmente podrías eliminar o desmarcar la tarea
-            taskElement.classList.remove("completed");
-        }
+  // Manejar la cancelación del toque
+  tarea.addEventListener("touchcancel", () => {
+    touchStartX = 0;
+    touchEndX = 0;
+  });
+
+  // Agregar el evento de deslizamiento del mouse para el escritorio
+  tarea.addEventListener("mousemove", (e) => {
+    touchStartX = e.clientX;
+    touchEndX = e.clientX;
+  });
+  tarea.addEventListener("mouseup", (e) => {
+    manejarDeslizamiento(tarea);
+  });
+
+  function manejarDeslizamiento(tareaElemento) {
+    const distanciaDeslizamiento = touchEndX - touchStartX;
+
+    // Si se desliza hacia la derecha, marcar la tarea como completada
+    if (distanciaDeslizamiento > 100) {
+      tareaElemento.classList.add("completada");
     }
-});
+    // Si se desliza hacia la izquierda, eliminar el estado de completado
+    else if (distanciaDeslizamiento < -100) {
+      tareaElemento.classList.remove("completada");
+    }
 
+    // Restablecer las coordenadas de inicio y fin del deslizamiento
+    touchStartX = 0;
+    touchEndX = 0;
+  }
+});
     </script>
 </body>
 </html>
