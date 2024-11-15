@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alerta de Deslizamiento</title>
+  <title>Sliding Alert</title>
   <style>
     .alert {
       background-color: #f8d7da;
@@ -12,17 +12,24 @@
       border-radius: 4px;
       margin-bottom: 20px;
       position: relative;
-      left: 0;
-      transition: left 0.3s ease-in-out;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .alert.slide-right {
+      transform: translateX(100%);
+    }
+
+    .alert.slide-left {
+      transform: translateX(-100%);
     }
 
     .alert.hidden {
-      left: -100%;
+      display: none;
     }
   </style>
 </head>
 <body>
-  <button onclick="showAlert()">Mostrar Alerta</button>
+  <button onclick="showAlert()">Show Alert</button>
 
   <div id="alertContainer"></div>
 
@@ -33,7 +40,7 @@
     function showAlert() {
       const alert = document.createElement("div");
       alert.classList.add("alert");
-      alert.textContent = "¡Puedes deslizarme hacia la derecha o izquierda para cerrarme!";
+      alert.textContent = "You can slide me left or right to close me!";
 
       alert.addEventListener("touchstart", handleTouchStart);
       alert.addEventListener("touchend", handleTouchEnd);
@@ -64,9 +71,11 @@
     function handleSwipe(element) {
       const swipeDistance = touchEndX - touchStartX;
       if (swipeDistance > 100) {
-        element.classList.add("hidden");
+        element.classList.add("slide-right");
+        setTimeout(() => element.classList.add("hidden"), 300);
       } else if (swipeDistance < -100) {
-        element.classList.add("hidden");
+        element.classList.add("slide-left");
+        setTimeout(() => element.classList.add("hidden"), 300);
       }
     }
   </script>
