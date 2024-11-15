@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sliding Alert</title>
+  <style>
+    .alert {
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      position: relative;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .alert.slide-right {
+      transform: translateX(100%);
+    }
+
+    .alert.slide-left {
+      transform: translateX(-100%);
+    }
+
+    .alert.hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <button onclick="showAlert()">Show Alert</button>
+
+  <div id="alertContainer"></div>
+
+  <script>
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    function showAlert() {
+      const alert = document.createElement("div");
+      alert.classList.add("alert");
+      alert.textContent = "You can slide me left or right to close me!";
+
+      alert.addEventListener("touchstart", handleTouchStart);
+      alert.addEventListener("touchend", handleTouchEnd);
+      alert.addEventListener("mousemove", handleMouseMove);
+      alert.addEventListener("mouseup", handleMouseUp);
+
+      document.getElementById("alertContainer").appendChild(alert);
+    }
+
+    function handleTouchStart(e) {
+      touchStartX = e.changedTouches[0].screenX;
+    }
+
+    function handleTouchEnd(e) {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe(e.target);
+    }
+
+    function handleMouseMove(e) {
+      touchStartX = e.clientX;
+    }
+
+    function handleMouseUp(e) {
+      touchEndX = e.clientX;
+      handleSwipe(e.target);
+    }
+
+    function handleSwipe(element) {
+      const swipeDistance = touchEndX - touchStartX;
+      if (swipeDistance > 100) {
+        element.classList.add("slide-right");
+        setTimeout(() => element.classList.add("hidden"), 300);
+      } else if (swipeDistance < -100) {
+        element.classList.add("slide-left");
+        setTimeout(() => element.classList.add("hidden"), 300);
+      }
+    }
+  </script>
+</body>
+</html>

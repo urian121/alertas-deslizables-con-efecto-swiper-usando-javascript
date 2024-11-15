@@ -12,19 +12,18 @@
       border-radius: 4px;
       margin-bottom: 20px;
       position: relative;
-      transition: transform 0.3s ease-in-out;
+      transition: transform 0.3s ease-in-out, opacity 0.3s ease;
+      cursor: pointer;
     }
 
     .alert.slide-right {
       transform: translateX(100%);
+      opacity: 0;
     }
 
     .alert.slide-left {
       transform: translateX(-100%);
-    }
-
-    .alert.hidden {
-      display: none;
+      opacity: 0;
     }
   </style>
 </head>
@@ -34,48 +33,43 @@
   <div id="alertContainer"></div>
 
   <script>
-    let touchStartX = 0;
-    let touchEndX = 0;
+    let startX = 0; // Coordenada inicial del toque o clic
+    let endX = 0;   // Coordenada final del toque o clic
 
     function showAlert() {
       const alert = document.createElement("div");
       alert.classList.add("alert");
-      alert.textContent = "You can slide me left or right to close me!";
+      alert.textContent = "Slide me left or right to remove me!";
 
-      alert.addEventListener("touchstart", handleTouchStart);
-      alert.addEventListener("touchend", handleTouchEnd);
-      alert.addEventListener("mousemove", handleMouseMove);
-      alert.addEventListener("mouseup", handleMouseUp);
+      // Eventos táctiles
+      alert.addEventListener("touchstart", handleStart);
+      alert.addEventListener("touchend", handleEnd);
+
+      // Eventos de ratón
+      alert.addEventListener("mousedown", handleStart);
+      alert.addEventListener("mouseup", handleEnd);
 
       document.getElementById("alertContainer").appendChild(alert);
     }
 
-    function handleTouchStart(e) {
-      touchStartX = e.changedTouches[0].screenX;
+    function handleStart(e) {
+      startX = e.touches ? e.touches[0].clientX : e.clientX; // Coordenada inicial
     }
 
-    function handleTouchEnd(e) {
-      touchEndX = e.changedTouches[0].screenX;
-      handleSwipe(e.target);
-    }
+    function handleEnd(e) {
+      endX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX; // Coordenada final
+      const swipeDistance = endX - startX;
 
-    function handleMouseMove(e) {
-      touchStartX = e.clientX;
-    }
+      const alert = e.target; // Elemento actual
 
-    function handleMouseUp(e) {
-      touchEndX = e.clientX;
-      handleSwipe(e.target);
-    }
-
-    function handleSwipe(element) {
-      const swipeDistance = touchEndX - touchStartX;
       if (swipeDistance > 100) {
-        element.classList.add("slide-right");
-        setTimeout(() => element.classList.add("hidden"), 300);
+        // Desliza hacia la derecha
+        alert.classList.add("slide-right");
+        setTimeout(() => alert.remove(), 300); // Elimina del DOM
       } else if (swipeDistance < -100) {
-        element.classList.add("slide-left");
-        setTimeout(() => element.classList.add("hidden"), 300);
+        // Desliza hacia la izquierda
+        alert.classList.add("slide-left");
+        setTimeout(() => alert.remove(), 300); // Elimina del DOM
       }
     }
   </script>
