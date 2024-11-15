@@ -1,100 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interactive Sliding Alert</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden; /* Evita el scroll horizontal */
-    }
-
-    #alertContainer {
-      position: relative;
-      overflow: hidden; /* Previene desbordamientos */
-    }
-
-    .alert {
-      background-color: #f8d7da;
-      color: #721c24;
-      padding: 15px;
-      border-radius: 4px;
-      margin-bottom: 20px;
-      position: relative;
-      transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-      opacity: 1;
-      cursor: pointer;
-    }
-
-    .alert.dragging {
-      transition: none; /* Desactiva la transición para el arrastre */
-    }
-  </style>
+  <title>Sistema de Alertas Deslizables Interactiva</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="assets/home.css">
 </head>
 <body>
-  <button onclick="showAlert()">Show Alert</button>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-12 text-center">
+        <h2 class="fw-bold">Sistema de Alertas Deslizables Interactivas</h2>
+        <p>Arraste la alerta para eliminarla.</p>
+      </div>
+    </div>
 
-  <div id="alertContainer"></div>
+    <div class="row justify-content-center">
+      <div class="col-md-12 text-center">
+        <button class="btn btn-primary mb-5" onclick="mostrarAlerta()">Mostrar Alerta</button>
+        <div id="alertContainer"></div>
+      </div>
+    </div>
+  </div>
 
-  <script>
-    function showAlert() {
-      const alert = document.createElement("div");
-      alert.classList.add("alert");
-      alert.textContent = "Slide me left or right to remove me!";
-
-      // Variables para el arrastre
-      let startX = 0;
-      let currentX = 0;
-      let isDragging = false;
-
-      // Agrega eventos para el arrastre
-      alert.addEventListener("mousedown", (e) => startDrag(e.clientX, alert));
-      alert.addEventListener("touchstart", (e) => startDrag(e.touches[0].clientX, alert));
-
-      document.addEventListener("mousemove", (e) => drag(e.clientX, alert));
-      document.addEventListener("touchmove", (e) => drag(e.touches[0].clientX, alert));
-
-      document.addEventListener("mouseup", () => endDrag(alert));
-      document.addEventListener("touchend", () => endDrag(alert));
-
-      document.getElementById("alertContainer").appendChild(alert);
-
-      function startDrag(x, element) {
-        startX = x;
-        isDragging = true;
-        element.classList.add("dragging");
-      }
-
-      function drag(x, element) {
-        if (!isDragging) return;
-
-        currentX = x - startX; // Calcula la distancia arrastrada
-        element.style.transform = `translateX(${currentX}px)`; // Aplica el desplazamiento
-      }
-
-      function endDrag(element) {
-        if (!isDragging) return;
-
-        isDragging = false;
-        element.classList.remove("dragging");
-
-        // Verifica si se deslizó lo suficiente para eliminar
-        if (currentX > 100) {
-          element.style.transform = `translateX(100%)`;
-          element.style.opacity = 0;
-          setTimeout(() => element.remove(), 300); // Elimina del DOM
-        } else if (currentX < -100) {
-          element.style.transform = `translateX(-100%)`;
-          element.style.opacity = 0;
-          setTimeout(() => element.remove(), 300); // Elimina del DOM
-        } else {
-          // Regresa a la posición inicial si no fue suficiente
-          element.style.transform = `translateX(0)`;
-        }
-      }
-    }
-  </script>
+<script src="assets/home.js"></script>
 </body>
 </html>

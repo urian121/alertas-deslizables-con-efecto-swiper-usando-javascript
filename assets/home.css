@@ -1,0 +1,28 @@
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden; /* Previene desbordamientos */
+      background-color: #ffffff;
+    }
+
+    #alertContainer {
+      position: relative;
+      overflow: hidden; /* Previene desbordamientos */
+    }
+
+    .alert {
+      background-color: #20ee91;
+      color: #555;
+      font-weight: bold;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      position: relative;
+      transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+      opacity: 1;
+      cursor: pointer;
+    }
+
+    .alert.dragging {
+      transition: none; /* Desactiva la transición para el arrastre */
+    }
