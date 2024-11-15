@@ -1,103 +1,74 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Tareas con Swiper</title>
-    <style>
-      body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alerta de Deslizamiento</title>
+  <style>
+    .alert {
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      position: relative;
+      left: 0;
+      transition: left 0.3s ease-in-out;
+    }
 
-ul {
-    list-style: none;
-    padding: 0;
-}
-
-.task {
-    background-color: #f2f2f2;
-    border: 1px solid #ccc;
-    padding: 15px;
-    margin: 10px 0;
-    width: 200px;
-    transition: transform 0.3s ease;
-    cursor: pointer;
-}
-
-.task.completed {
-    background-color: #d4edda;
-    text-decoration: line-through;
-    color: #155724;
-}
-
-    </style>
+    .alert.hidden {
+      left: -100%;
+    }
+  </style>
 </head>
 <body>
-    <h1>Lista de Tareas</h1>
-    <ul id="taskList">
-        <li class="task">Tarea 1</li>
-        <li class="task">Tarea 2</li>
-        <li class="task">Tarea 3</li>
-    </ul>
+  <button onclick="showAlert()">Mostrar Alerta</button>
 
+  <div id="alertContainer"></div>
 
-    <script>
-   const tareas = document.querySelectorAll(".tarea");
+  <script>
+    let touchStartX = 0;
+    let touchEndX = 0;
 
-tareas.forEach(tarea => {
-  let touchStartX = 0;
-  let touchEndX = 0;
+    function showAlert() {
+      const alert = document.createElement("div");
+      alert.classList.add("alert");
+      alert.textContent = "¡Puedes deslizarme hacia la derecha o izquierda para cerrarme!";
 
-  // Capturar la posición inicial del toque
-  tarea.addEventListener("touchstart", (e) => {
-    touchStartX = e.changedTouches[0].screenX;
-  });
+      alert.addEventListener("touchstart", handleTouchStart);
+      alert.addEventListener("touchend", handleTouchEnd);
+      alert.addEventListener("mousemove", handleMouseMove);
+      alert.addEventListener("mouseup", handleMouseUp);
 
-  // Capturar la posición del deslizamiento
-  tarea.addEventListener("touchmove", (e) => {
-    touchEndX = e.changedTouches[0].screenX;
-  });
-
-  // Capturar la posición final del toque y manejar el deslizamiento
-  tarea.addEventListener("touchend", (e) => {
-    manejarDeslizamiento(tarea);
-  });
-
-  // Manejar la cancelación del toque
-  tarea.addEventListener("touchcancel", () => {
-    touchStartX = 0;
-    touchEndX = 0;
-  });
-
-  // Agregar el evento de deslizamiento del mouse para el escritorio
-  tarea.addEventListener("mousemove", (e) => {
-    touchStartX = e.clientX;
-    touchEndX = e.clientX;
-  });
-  tarea.addEventListener("mouseup", (e) => {
-    manejarDeslizamiento(tarea);
-  });
-
-  function manejarDeslizamiento(tareaElemento) {
-    const distanciaDeslizamiento = touchEndX - touchStartX;
-
-    // Si se desliza hacia la derecha, marcar la tarea como completada
-    if (distanciaDeslizamiento > 100) {
-      tareaElemento.classList.add("completada");
-    }
-    // Si se desliza hacia la izquierda, eliminar el estado de completado
-    else if (distanciaDeslizamiento < -100) {
-      tareaElemento.classList.remove("completada");
+      document.getElementById("alertContainer").appendChild(alert);
     }
 
-    // Restablecer las coordenadas de inicio y fin del deslizamiento
-    touchStartX = 0;
-    touchEndX = 0;
-  }
-});
-    </script>
+    function handleTouchStart(e) {
+      touchStartX = e.changedTouches[0].screenX;
+    }
+
+    function handleTouchEnd(e) {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe(e.target);
+    }
+
+    function handleMouseMove(e) {
+      touchStartX = e.clientX;
+    }
+
+    function handleMouseUp(e) {
+      touchEndX = e.clientX;
+      handleSwipe(e.target);
+    }
+
+    function handleSwipe(element) {
+      const swipeDistance = touchEndX - touchStartX;
+      if (swipeDistance > 100) {
+        element.classList.add("hidden");
+      } else if (swipeDistance < -100) {
+        element.classList.add("hidden");
+      }
+    }
+  </script>
 </body>
 </html>
