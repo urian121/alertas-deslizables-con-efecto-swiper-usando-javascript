@@ -35,4 +35,8 @@ Este proyecto implementa un **sistema de alertas interactivas** con un efecto de
     Paypal iamdeveloper86@gmail.com
     Da las gracias públicamente 🤓.
 
+
+Y no olvides dejar tu estrella ⭐ en el repositorio...
+¡dicen que trae buena suerte! 🍀
+
 ## No olvides SUSCRIBIRTE 👍
