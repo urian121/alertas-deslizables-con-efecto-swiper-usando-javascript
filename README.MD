@@ -36,7 +36,9 @@ Este proyecto implementa un **sistema de alertas interactivas** con un efecto de
     Da las gracias públicamente 🤓.
 
 
+
 No olvides dejar tu estrella ⭐ en el repositorio...
+Y no olvides dejar tu estrella ⭐ en el repositorio.
 ¡dicen que trae buena suerte! 🍀
 
 ## No olvides SUSCRIBIRTE 👍
